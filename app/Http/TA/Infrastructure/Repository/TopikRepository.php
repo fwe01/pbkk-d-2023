@@ -2,6 +2,7 @@
 
 namespace App\Http\TA\Infrastructure\Repository;
 
+use App\Http\TA\Domain\Enum\StatusTopik;
 use App\Http\TA\Domain\Models\Topik;
 use App\Http\TA\Domain\Service\Repository\TopikRepositoryInterface;
 use Illuminate\Support\Facades\DB;
@@ -17,11 +18,6 @@ class TopikRepository implements TopikRepositoryInterface
         );
     }
 
-    public function getById(int $topik_id): ?Topik
-    {
-        // TODO: Implement getById() method.
-    }
-
     private function createPayload(Topik $topik)
     {
         return [
@@ -30,5 +26,23 @@ class TopikRepository implements TopikRepositoryInterface
             'judul' => $topik->getJudul(),
             'status' => $topik->getStatus()->value,
         ];
+    }
+
+    public function getById(int $topik_id): ?Topik
+    {
+        $row = DB::table('topiks')
+            ->where('id', $topik_id)
+            ->first();
+
+        if (!$row){
+            return null;
+        }
+
+        return new Topik(
+            $row->id,
+            $row->judul,
+            $row->dosen,
+            StatusTopik::from($row->status),
+        );
     }
 }

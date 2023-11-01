@@ -27,10 +27,10 @@ class Controller extends BaseController
         }
     }
 
-    public function failed($data){
+    public function failed(Throwable $data){
         return [
             'success' => false,
-            'exeception' => $data
+            'execption' => $data->getMessage()
         ];
     }
 

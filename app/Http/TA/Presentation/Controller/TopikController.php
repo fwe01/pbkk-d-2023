@@ -5,6 +5,8 @@ namespace App\Http\TA\Presentation\Controller;
 use App\Http\Controllers\Controller;
 use App\Http\TA\Application\Service\CreateTopik\CreateTopikRequest;
 use App\Http\TA\Application\Service\CreateTopik\CreateTopikService;
+use App\Http\TA\Application\Service\GetTopik\GetTopikRequest;
+use App\Http\TA\Application\Service\GetTopik\GetTopikService;
 use App\Http\TA\Application\Service\UpdateTopik\UpdateTopikRequest;
 use App\Http\TA\Application\Service\UpdateTopik\UpdateTopikService;
 use App\Http\TA\Domain\Enum\StatusTopik;
@@ -14,9 +16,17 @@ class TopikController extends Controller
 {
     public function __construct(
         private CreateTopikService $create_topik_service,
-        private UpdateTopikService $update_topik_service
-    )
+        private UpdateTopikService $update_topik_service,
+        private GetTopikService $get_topik_service, )
     {
+    }
+
+    public function getTopik(int $id){
+        $request = new GetTopikRequest(
+            $id
+        );
+
+        return $this->executeService($this->get_topik_service, $request);
     }
 
     public function createTopik(Request $request){
