@@ -5,13 +5,16 @@ namespace App\Http\Controllers;
 use App\Models\PesertaTopik;
 use App\Models\Topik;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\View\View;
 
 class TopicController extends Controller
 {
     public function show(): View
     {
+        $time_start = microtime(true);
+
+
 //        $rows = DB::table('topiks')
 //            ->join('peserta_topik', 'peserta_topik.id_topik', 'topiks.id')
 //            ->join('users', 'peserta_topik.id_user', 'users.id')
@@ -20,9 +23,19 @@ class TopicController extends Controller
 //        dd($rows[0]->name);
 
 //        $topics = Topik::with('peserta')->paginate(2);
-        $topics = Topik::paginate(20);
+        for ($i = 0; $i < 100; $i++) {
+            if (Cache::has('topik')) {
+                $topics = Cache::get('topik');
+            } else {
+                $topics = Topik::all();
+                Cache::put('random', $topics, 60);
+            }
+        }
 
 //        dd($topics);
+
+        $time_end = microtime(true);
+        dd($time_end - $time_start);
 
         return view('dashboard.penawaran-topik', [
             'topics' => $topics,
